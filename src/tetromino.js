@@ -20,13 +20,15 @@ export default class Tetromino {
 		return new Tetromino(TETROMINO_SHAPES[tetrominoType], position, rotation);
 	}
 
-	blockmap() {
-		return BlockMap.fromFn((x, y) => this.occupies(x, y) ? 'active' : 'empty');
+	static moveBy(dx, dy) {
+		return (t) => {
+			let {x, y} = t.position;
+			return new Tetromino(t.shape, {x: x+dx, y: y+dy}, t.rotation)
+		};
 	}
 
-	movedBy(dx, dy) {
-		let {x, y} = this.position;
-		return new Tetromino(this.shape, {x: x + dx, y: y + dy}, this.rotation);
+	blockmap() {
+		return BlockMap.fromFn((x, y) => this.occupies(x, y) ? 'active' : 'empty');
 	}
 
 	rotated(by) {

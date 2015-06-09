@@ -8,23 +8,26 @@ const BLOCK_COLORS = {
 import BlockMap from './blockmap';
 import Tetromino from './tetromino';
 
-let ticks = Bacon.repeatedly(1000, "tick!"),
-	keyLeft = keypressStream(37), keyRight = keypressStream(39), keyDown = keypressStream(40), keyRotate = keypressStream(32);
+let timeToFall = Bacon.repeatedly(1000, "tick!"),
+	leftPressed = keypressStream(37), rightPressed = keypressStream(39), downPressed = keypressStream(40), spacePressed = keypressStream(32);
 
 let landscape = Bacon.once(BlockMap.empty());
 
 
-let tetrominoMoves = Bacon.mergeAll(
-	ticks.map(() => [0, 1]),
-	keyLeft.map(() => [-1, 0]),
-	keyRight.map(() => [1, 0]),
-	keyDown.map(() => [0, 1])
+let tetrominoActions = Bacon.mergeAll(
+	// out of user control - falling over time
+	timeToFall.map(() => Tetromino.moveBy(0, 1)),
+
+	// user controls of the tetromino
+	leftPressed.map(() => Tetromino.moveBy(-1, 0)),
+	rightPressed.map(() => Tetromino.moveBy(1, 0)),
+	downPressed.map(() => Tetromino.moveBy(0, 1))
 );
-let tetromino = tetrominoMoves.scan(
+
+let tetromino = tetrominoActions.scan(
 	Tetromino.create('s', {x: 4, y: 0}, 0), 
-	(t, delta) => {
-		let [dx, dy] = delta;
-		return t.movedBy(dx, dy)
+	(t, action) => {
+		return action(t);
 	}
 );
 
