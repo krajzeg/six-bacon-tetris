@@ -1,0 +1,28 @@
+{
+  "name": "frp-tetris",
+  "version": "1.0.0",
+  "description": "Tetris with Bacon.JS FRP.",
+  "main": "serve.js",
+  "dependencies": {
+    "babelify": "^6.1.2",
+    "browserify-shim": "^3.8.8",
+    "browserify": "^10.2.4",
+    "gulp": "^3.9.0"
+  },
+  "devDependencies": {
+    "babelify": "^6.1.2",
+    "browserify": "^10.2.4",
+    "browserify-shim": "^3.8.8",
+    "gulp": "^3.9.0",
+    "vinyl-source-stream": "^1.1.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "FRP",
+    "tetris"
+  ],
+  "author": "Jakub Wasilewski <wasyl@wasyl.eu>",
+  "license": "public domain"
+}

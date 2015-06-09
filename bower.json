@@ -1,0 +1,23 @@
+{
+  "name": "frp-tetris",
+  "version": "1.0.0",
+  "authors": [
+    "Jakub Wasilewski <wasyl@wasyl.eu>"
+  ],
+  "description": "FRP tetris with Bacon.js.",
+  "main": "src/tetris.js",
+  "license": "public domain",
+  "homepage": "http://wasyl.eu",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bacon": "~0.7.65",
+    "lodash": "~3.9.3",
+    "jquery": "~2.1.4"
+  }
+}
