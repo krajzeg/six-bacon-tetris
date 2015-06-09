@@ -1,3 +1,4 @@
+import BlockMap from './blockmap';
 
 const INITIAL_PLAYFIELD_STATE = _.range(0, 10).map(x =>
 	_.range(0, 20).map(y => 'empty')
@@ -20,10 +21,7 @@ export default class Tetromino {
 	}
 
 	blockmap() {
-		return _.range(0, 10).map(x =>
-			_.range(0, 20).map(y =>  
-				this.occupies(x, y) ? 'active' : 'empty'
-			));
+		return BlockMap.fromFn((x, y) => this.occupies(x, y) ? 'active' : 'empty');
 	}
 
 	movedBy(dx, dy) {
