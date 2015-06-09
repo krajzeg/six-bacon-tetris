@@ -35,12 +35,37 @@ export default class Tetromino {
 		return new Tetromino(this.shape, this.position, (this.rotation + 4 + by) % 4)
 	}
 
+	// is the tetromino out of playfield bounds?
+	outOfBounds() {		
+		return _(this.occupiedBlocks()).any( (block) => {
+			let {x, y} = block;
+			return x < 0 || x >= BlockMap.WIDTH || y >= BlockMap.HEIGHT
+		});
+	}
+
+	// are the coordinates x,y occupied by this block?
 	occupies(x, y) {
 		// transform coordinates into "shape space"
 		let [shapeX, shapeY] = [x - this.position.x, y - this.position.y];
 		// check the character at those coordinates in the shape
 		let shapeChar = (this.shape[shapeY] || "").charAt(shapeX);
 		// occupied?
-		return shapeChar && (shapeChar != ' ');
+		return shapeChar == '#';
+	}
+
+	// returns a list of playfield coordinates occupied by this block, e.g. [{x: 5, y: 7}, {x: 6, y: 7} ...]
+	occupiedBlocks() {
+		let shape = this.shape;
+		var coords = [];
+		shape.map((row, shapeY) => {
+			_.map(row, (character, shapeX) => {
+				if (character == "#") {
+					let [x,y] = [this.position.x + shapeX, this.position.y + shapeY];
+					coords.push({x: x, y: y});
+				}
+			})
+		});
+
+		return coords;
 	}
 }

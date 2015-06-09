@@ -1,9 +1,7 @@
-const WIDTH = 10, HEIGHT = 20;
-
 export default class BlockMap {
 	constructor(fn) {
-		this.items = _.range(0, WIDTH).map(x =>
-			_.range(0, HEIGHT).map(y => fn(x, y))
+		this.items = _.range(0, BlockMap.WIDTH).map(x =>
+			_.range(0, BlockMap.HEIGHT).map(y => fn(x, y))
 		);
 	}
 
@@ -31,3 +29,6 @@ export default class BlockMap {
 		);
 	}
 }
+
+BlockMap.WIDTH = 10;
+BlockMap.HEIGHT = 20;
