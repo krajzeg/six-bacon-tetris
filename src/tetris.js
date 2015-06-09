@@ -8,23 +8,28 @@ const BLOCK_COLORS = {
 import BlockMap from './blockmap';
 import Tetromino from './tetromino';
 
-var ticks = Bacon.repeatedly(1000, "tick!");
+let ticks = Bacon.repeatedly(1000, "tick!"),
+	keyLeft = keypressStream(37), keyRight = keypressStream(39), keyDown = keypressStream(40), keyRotate = keypressStream(32);
 
-var landscape = Bacon.once(BlockMap.empty());
-var tetromino = ticks.scan(
+let landscape = Bacon.once(BlockMap.empty());
+
+
+let tetrominoMoves = Bacon.mergeAll(
+	ticks.map(() => [0, 1]),
+	keyLeft.map(() => [-1, 0]),
+	keyRight.map(() => [1, 0]),
+	keyDown.map(() => [0, 1])
+);
+let tetromino = tetrominoMoves.scan(
 	Tetromino.create('s', {x: 4, y: 0}, 0), 
-	(t,_) => t.movedBy(0, 1)
+	(t, delta) => {
+		let [dx, dy] = delta;
+		return t.movedBy(dx, dy)
+	}
 );
 
-Bacon.repeatedly(1000, []);
-
-var playfield = Bacon.combineWith(
-	BlockMap.combine, 
-	landscape,
-	tetromino.map(t => t.blockmap())
-);
-playfield.onValue(playfieldRenderer());
-
+let display = Bacon.combineWith( BlockMap.combine, landscape, tetromino.map(t => t.blockmap()) );
+display.onValue(playfieldRenderer());
 
 function playfieldRenderer() {
 	let canvas = document.getElementById('playfield'),
@@ -40,4 +45,10 @@ function playfieldRenderer() {
 			ctx2d.fillRect(x * blockWidth, y * blockHeight, blockWidth - 1, blockHeight - 1);			
 		});
 	};
+}
+
+function keypressStream(keyCode) {
+	return $(window).asEventStream('keydown')
+		.map((evt) => evt.which)
+		.filter((code) => code == keyCode);
 }
