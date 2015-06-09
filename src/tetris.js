@@ -21,7 +21,7 @@ Bacon.repeatedly(1000, []);
 var playfield = Bacon.combineWith(
 	BlockMap.combine, 
 	landscape,
-	tetromino.map(block => block.blockmap())
+	tetromino.map(t => t.blockmap())
 );
 playfield.onValue(playfieldRenderer());
 
