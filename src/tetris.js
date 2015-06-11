@@ -16,7 +16,7 @@ let landscape = Bacon.once(BlockMap.empty());
 // a stream of all the actions we might want the tetromino to take
 let tetrominoActions = Bacon.mergeAll(
 	// out of user control - falling over time
-	timeToFall.map(() => Tetromino.moveBy(0, 1)),
+	//timeToFall.map(() => Tetromino.moveBy(0, 1)),
 
 	// user controls of the tetromino
 	leftPressed.map(() => Tetromino.moveBy(-1, 0)),
@@ -25,14 +25,25 @@ let tetrominoActions = Bacon.mergeAll(
 );
 
 // the stream representing the current state of the falling tetromino
-let tetromino = tetrominoActions.scan(
-	Tetromino.create('s', {x: 4, y: 0}, 0), 
-	(oldTetromino, action) => {
-		let newTetromino = action(oldTetromino);
-		let moveWasLegal = !newTetromino.outOfBounds();
-		return moveWasLegal ? newTetromino : oldTetromino;
-	}
-);
+
+let tetromino = fallingTetrominoes(createNewTetromino());
+
+function createNewTetromino() {
+	return Tetromino.create('s', {x: 4, y: 0}, 0);
+}
+
+function fallingTetrominoes(initial) {
+	return tetrominoActions
+		.scan(initial, (t, action) => action(t))
+		.takeWhile((t) => !t.locked)
+		.mapEnd(null)
+		.flatMapLatest((t) => {
+			if (t == null)
+				return fallingTetrominoes(createNewTetromino());
+			else
+				return t;
+		});
+}
 
 // the display is formed by displaying the blocks already locked in place ("landscape")
 // along with the blocks forming the falling tetromino
